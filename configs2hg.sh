@@ -1,4 +1,18 @@
 #!/bin/sh
+#
+#  configs2hg -- backup filelist to Mercurial repository.
+#
+#  Required utilities: hg, rsync, mail (with "admins" alias)
+#
+#  Written at Dec-2014 by ilya.evseev@gmail.com
+#  Distributed as public domain.
+#
+
+INSTALL_ME_SO='
+   cd /usr/local/bin &&
+   wget -qO configs2hg https://gist.githubusercontent.com/ilyaevseev/d34ade484e6782d71db1/raw/79ecef988737c5f1860a1c4482ce194619279f17/configs2hg.sh &&
+   chmod +x configs2hg
+'
 
 ROOTDIR="/"
 DELMODE="warn"
