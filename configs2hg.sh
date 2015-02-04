@@ -1,8 +1,9 @@
 #!/bin/sh
 #
-#  configs2hg -- backup filelist to Mercurial repository.
+#  configs2git
+#  configs2hg -- backup filelist to Git/Mercurial repository.
 #
-#  Required utilities: hg, rsync, mail (with "admins" alias)
+#  Required utilities: hg or git, rsync, mail (with "admins" alias)
 #
 #  Written at Dec-2014 by ilya.evseev@gmail.com
 #  Distributed as public domain.
@@ -16,13 +17,22 @@ INSTALL_ME_SO='
 
 ROOTDIR="/"
 DELMODE="warn"
+MYNAME="$(basename $0)"
 
 Err() {
-	echo "$@" | mail -s "configs2hg" admins
-	logger -p user.err -t "config2hg" -s "$@"
+	echo "$@" | mail -s "$MYNAME" admins
+	logger -p user.err -t "$MYNAME" -s "$@"
 }
 
 Fail() { Err "$@"; exit 1; }
+
+case "$MYNAME" in
+	*git* ) BASESYS="git" ;;
+	*hg* | *mercurial* ) BASESYS="hg" ;;
+	* ) Fail "my name is not configs2hg nor configs2git" ;;
+esac
+
+HgFail() { Fail "$BASESYS $@ failed in $DESTDIR"; }
 
 Doit() {
 	test -n "$VERBOSE" && echo "$@"
@@ -45,7 +55,7 @@ test $# = 2 || Fail "usage: $0 filelist destdir"
 FILELIST="$1"
 DESTDIR="$2"
 
-test -d "$DESTDIR/.hg"  || Fail "Missing subdir $DESTDIR/.hg"
+test -d "$DESTDIR/.$BASESYS"  || Fail "Missing subdir $DESTDIR/.$BASESYS"
 
 NOT_EMPTY=
 while read fn; do
@@ -57,7 +67,7 @@ while read fn; do
 	src="$ROOTDIR/$fn"
 	dst="$DESTDIR/$fn"
 
-	if test -e "$dst"; then
+	if test -e "$dst" -a -e "$src"; then
 		srctype="$(LANG=C stat -c '%F' "$src" 2>/dev/null)"
 		dsttype="$(LANG=C stat -c '%F' "$dst" 2>/dev/null)"
 		test "$srctype" = "$dsttype" || Fail "type changed: src:$src:$srctype dst:$dst:$dsttype"
@@ -84,7 +94,16 @@ done < $FILELIST
 test -z "$NOT_EMPTY" && Fail "nothing readed from $FILELIST"
 
 cd "$DESTDIR"
-hg status >/dev/null || Fail "hg status failed"
-hg status | grep -q '' || exit   # ..nothing to do
-hg addremove || Fail "hg addremove failed"
-hg commit -m "configs2hg: autocommit at $(date '+%Y-%m-%d_%H:%M:%S')" || Fail "hg commit failed"
+"$BASESYS" status >/dev/null || HgFail "status"
+msg="$MYNAME: autocommit at $(date '+%Y-%m-%d_%H:%M:%S')"
+
+case "$BASESYS" in
+hg  ) hg status | grep -q '' || exit   # ..nothing to do
+      Doit hg addremove || HgFail "addremove"
+      Doit hg commit -m "$msg" || HgFail "commit"
+      ;;
+git ) git status | grep -qi 'nothing to commit' && exit
+      Doit git add -A || HgFail "add -A"
+      Doit git commit -am "$msg" || HgFail "commit"
+;;
+esac
