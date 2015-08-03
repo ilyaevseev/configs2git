@@ -6,21 +6,22 @@ Copies selected configs to Git or Hg repository. It is better than track entire 
 
 #### Prepare once:
 
-* echo '
-    /boot/grub/grub.cfg
-    /etc/apt/sources.list.d/
-    /etc/fstab
-    /etc/group
-    /etc/passwd
-    /etc/shadow
-    /etc/rc.local
-    /root/.ssh/
-    ' > myconfigs.lst
-* git init myconfigs
+    echo '
+	/boot/grub/grub.cfg
+	/etc/apt/sources.list.d/
+	/etc/fstab
+	/etc/group
+	/etc/passwd
+	/etc/shadow
+	/etc/rc.local
+	/root/.ssh/
+	' > myconfigs.lst
+
+```git init myconfigs```
 
 #### Do periodically:
 
-* configs2git myconfigs.lst myconfigs/
+```configs2git myconfigs.lst myconfigs/```
 
 ### Mercurial support
 
