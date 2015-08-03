@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #  configs2git
-#  configs2hg -- backup filelist to Git/Mercurial repository.
+#  configs2git -- backup filelist to Git/Mercurial repository.
 #
 #  Required utilities: hg or git, rsync, mail (with "admins" alias)
 #
@@ -11,8 +11,8 @@
 
 INSTALL_ME_SO='
    cd /usr/local/bin &&
-   wget -qO configs2hg https://gist.githubusercontent.com/ilyaevseev/d34ade484e6782d71db1/raw/79ecef988737c5f1860a1c4482ce194619279f17/configs2hg.sh &&
-   chmod +x configs2hg
+   wget -qO configs2git https://gist.githubusercontent.com/ilyaevseev/d34ade484e6782d71db1/raw/79ecef988737c5f1860a1c4482ce194619279f17/configs2git &&
+   chmod +x configs2git
 '
 
 ROOTDIR="/"
