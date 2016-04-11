@@ -11,7 +11,7 @@
 
 INSTALL_ME_SO='
    cd /usr/local/bin &&
-   wget -qO configs2git https://gist.githubusercontent.com/ilyaevseev/d34ade484e6782d71db1/raw/79ecef988737c5f1860a1c4482ce194619279f17/configs2git &&
+   wget -qO configs2git https://raw.githubusercontent.com/ilyaevseev/configs2git/master/configs2git &&
    chmod +x configs2git
 '
 
